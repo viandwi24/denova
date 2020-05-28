@@ -13,7 +13,7 @@ export class Services {
     async register(services: any) {
         for(let serviceKey in services) {
             let path = app().make("denova.path") + "/" + services[serviceKey] + ".ts";
-            let serviceClass = await import(path);
+            let serviceClass = await import("file:///" + path);
             let service = new serviceClass.default;
 
             // register services
