@@ -5,6 +5,7 @@ export class Config {
 
     async load() {
         let path = app().make("denova.path") + "/config";
+        console.log(path);
         for (const dir of Deno.readDirSync(path)) {
             let config = await import(path + "/" + dir.name);
             this.configs[dir.name.replace(".ts", "")] = config.default;
