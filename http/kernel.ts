@@ -35,7 +35,7 @@ export class Kernel {
     private async getRouteMap() {
         let routes = RouteMap.get();
         for (let route in routes) {
-            await import(routes[route]);
+            await import("file:///" + routes[route]);
         }
         return routes;
     }
