@@ -5,7 +5,7 @@ declare global {
 }
 
 const app: any = () => {
-    return window.app ?? {};
+    return window.app ?? null;
 };
 
 export const version: string = "0.1.2";

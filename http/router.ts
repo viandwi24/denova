@@ -13,7 +13,7 @@ export class Router {
         let callback = async (context:any) => {            
             let content = null;
             if (typeof action == "function") {
-                content = action(context);
+                content = await action(context);
             } else if (typeof action == "string") {
                 content = await this.controllerHanle(action, context);
             } else {
@@ -56,7 +56,7 @@ export class Router {
         let controller = new controllerFile[controllerClassName](context);
 
         // call action
-        let response = controller[controllerMethodName]();
+        let response = controller[controllerMethodName](context.request, context.params, context);
         
         // return
         return response;
