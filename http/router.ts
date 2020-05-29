@@ -50,7 +50,7 @@ export class Router {
         }
 
         // load file
-        let controllerFile = await import(path);
+        let controllerFile = await import("file:///" + path);
 
         // consruct acontroller
         let controller = new controllerFile[controllerClassName](context);
