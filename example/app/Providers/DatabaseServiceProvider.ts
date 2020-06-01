@@ -1,8 +1,7 @@
-import { ServiceProvider, Service, Application } from "../../mod.ts";
-import * as Driver from "../../../database/driver.ts";
-import { make, IConnectionOption, get } from "../../../database/connection.ts";
-import { Config } from "../../mod.ts";
-import { Database } from "../../../database/database.ts";
+import { ServiceProvider, Service, Application, Config } from "../../mod.ts";
+import * as Driver from "https://deno.land/x/denova@0.1.3/database/driver.ts";
+import { make, IConnectionOption } from "https://deno.land/x/denova@0.1.3/database/connection.ts";
+import { Database } from "https://deno.land/x/denova@0.1.3/database/database.ts";
 
 @Service()
 export class DatabaseServiceProvider implements ServiceProvider {
