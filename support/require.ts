@@ -9,6 +9,5 @@ export async function require(path: string) {
     if (!regLocal.test(path) && !regOnline.test(path)) {
         path = "file:///" + path;
     }
-    console.log(path)
     return await import(path);
 }
