@@ -15,8 +15,9 @@ export class DatabaseServiceProvider implements ServiceProvider {
     }
 
     public async boot() {
-        let db = new Database();
-        let result = await db.query("SELECT * FROM users");
+        // example :
+        // let db = new Database();
+        // let result = await db.query("SELECT * FROM users");
     }
 
     private getConfig(driver: string) {
