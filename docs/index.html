@@ -14,18 +14,21 @@
     window.$docsify = {
       name: 'Denova<br><small>Deno Framework Like Laravel</small>',
       repo: 'https://www.github.com/viandwi24/denova',
+      loadNavbar: true,
 
       search: {
         maxAge: 86400000,
         paths: 'auto',
         placeholder: 'Type to search',
         noData: 'No Results!',
-        depth: 6,
+        depth: 10,
         hideOtherSidebarContent: true,
       },
     }
+    document.addEventListener("DOMContentLoaded", () => Prism.highlight());
   </script>
   <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
   <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.min.js"></script>
 </body>
 </html>
