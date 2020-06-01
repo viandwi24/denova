@@ -22,7 +22,9 @@ export class Services {
         for(let index in this.services) {
             let service = this.services[index];
             let serviceName = this.getNameService(service);
-            let serviceClass = await require(root + service);
+            let regOnline = new RegExp('http://|https://');
+            let path = (regOnline.test(service)) ? service : (root + service);
+            let serviceClass = await require(path);
             
             // bind to container
             try {
