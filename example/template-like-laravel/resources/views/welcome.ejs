@@ -58,7 +58,7 @@
     <body>
         <div class="flex-center position-ref full-height">
             <div class="content">
-                <p>Hello <%= name %>!</p>
+                <%- await include('part.hello', { name }) %>
                 <div class="title m-b-md">
                     Denova <%= version %>
                 </div>

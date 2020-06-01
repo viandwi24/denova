@@ -52,4 +52,4 @@ export * as BError from "https://deno.land/x/berror/berror.ts";
  * From Dejs
  * for make template engine for view
  */
-export * as Dejs from 'https://deno.land/x/dejs@0.6.0/mod.ts';
+export * as Dejs from "./view/dejs/mod.ts";

@@ -10,7 +10,7 @@ export class DatabaseServiceProvider implements ServiceProvider {
     }
 
     public async register() {
-        await Driver.add('mysql', 'file:///home/viandwi24/Project/denova-0.1.3/database/driver/mysql.ts');
+        await Driver.add('mysql', 'https://deno.land/x/denova@0.1.3/database/driver/mysql.ts');
         await make(this.getConfig('mysql'));
     }
 

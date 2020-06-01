@@ -20,6 +20,7 @@ let timeout: number|null = null;
 async function runApp() {
     process.close();
     process = await startProcess();
+    Deno.run({ cmd: ['clear'] });
     console.log("[Denovamon] Change file detected - restarting denova http.")    
 }
 

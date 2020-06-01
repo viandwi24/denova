@@ -14,7 +14,12 @@ export class View {
         return await Dejs.renderFileToString( this.parsePath(path), params );
     }
 
-    private parsePath(path: string) {
+    /**
+     * parse path for view file render
+     * 
+     * @param path 
+     */
+    public parsePath(path: string) {
         let safe = this.safePath( path.replace(".", "/") );
         return this.getViewLocation() + safe + ".ejs";
     }
