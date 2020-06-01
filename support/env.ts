@@ -1,18 +1,49 @@
 import { Dotenv } from "../deps.ts";
-import { app } from "../app.ts";
+import { Exception } from "../exception/exception.ts";
 
-let cache: any = null;
+/**
+ * Cache a config
+ * a confing loaded set in this variable.
+ */
+let cache: any = {};
 
-export function get(key?: string, defaut?: string|number) {
-    if (cache == null) {
-        let root = (app() != null) ? app().make("denova.path") : Deno.cwd();
-        let path = `${root}/.env`;
-        cache = Dotenv.config({ path });
+/**
+ * Load a env file
+ * 
+ * @param path 
+ */
+export function load(path: string = '', safe: boolean = false) {
+    if (path == '') path = Deno.cwd();
+
+    let config;
+    let options: Dotenv.ConfigOptions = {
+        safe,
+        path,
     }
-    let env = cache;
-    if (typeof key != 'undefined') {
-        if (typeof env[key] == 'undefined') return (typeof defaut != 'undefined') ? defaut : null;
-        return env[key];
+    
+
+    /**
+     * Parse env
+     */
+    try {
+        config = Dotenv.config(options);
+    } catch (err) {
+        throw new Exception("Failed load / parse env config", err, {path, options});
     }
-    return env;
+    cache = {...cache, ...config};
+
+    return cache;
+}
+
+/**
+ * Get a env with key
+ * 
+ * @param key 
+ * @param ifNull - (default)
+ */
+export function env(key: string, ifNull: any) {
+    let result = cache[key];
+    return (typeof result == 'undefined')
+        ? ifNull
+        : result;
 }

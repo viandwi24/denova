@@ -1,12 +1,15 @@
 import { StdFlags, Dotenv } from "../deps.ts";
-import { app, version } from "../app.ts";
+import { version } from "../version.ts";
+import { Application } from "../foundation/application.ts";
+import { Service } from "../service.ts";
+import { env } from "../support/env.ts";
+import { Router } from "../facades/router.ts";
 
-
-
+@Service()
 export class Kernel {
     parsedArgs: any;
 
-    constructor() {
+    constructor(private app: Application) {
         this.parsedArgs = StdFlags.parse(Deno.args);
     }
 
@@ -22,10 +25,11 @@ export class Kernel {
                 break;
             
             case 'name':
-                let root = app().make("denova.path");
-                let path = `${root}/.env`;
-                let config = Dotenv.config({ path });
-                console.log("App Name : " + config.APP_NAME);
+                console.log("App Name : " + env('APP_NAME', null));
+                break;
+            
+            case 'route:list':
+                Router.print();
                 break;
         
             default:

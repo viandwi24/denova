@@ -1,6 +1,6 @@
 import { Collection } from "../support/collection.ts";
 
-export default class Response {
+export class Response {
     content: any;
     context: any;
     public headers: any = {};
