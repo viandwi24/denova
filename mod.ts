@@ -14,6 +14,8 @@ export { RouteCollection } from "./http/route_collection.ts";
 // Console
 export { Kernel as ConsoleKernel } from "./console/kernel.ts";
 
+// Template engine
+export { View, view } from "./facades/view.ts";
 
 // Support / Library
 export { env } from "./support/env.ts";

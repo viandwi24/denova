@@ -15,4 +15,6 @@ export {
     Inject,
     ServiceProvider,
     require,
+    View,
+    view,
 } from "../mod.ts";

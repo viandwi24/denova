@@ -47,3 +47,9 @@ export * as DI_SERVICE from "https://deno.land/x/di/service.ts";
  * for error handling and logging
  */
 export * as BError from "https://deno.land/x/berror/berror.ts";
+
+/**
+ * From Dejs
+ * for make template engine for view
+ */
+export * as Dejs from 'https://deno.land/x/dejs@0.6.0/mod.ts';
