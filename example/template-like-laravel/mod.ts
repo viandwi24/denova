@@ -18,4 +18,4 @@ export {
     View,
     view,
     response,
-} from "https://deno.land/x/denova@0.1.3/mod.ts";
+} from "../../mod.ts";

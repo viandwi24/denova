@@ -9,11 +9,9 @@ async function startProcess() {
     };
     opts.stdout = 'inherit';
     opts.stderr = 'inherit';
-    let process = Deno.run(opts);
-    return process;
+    return Deno.run(opts);
 }
 
-const throttle = 500;
 console.log("[Denovamon] A Watcher Change For Denova. Watching...");
 let process: Deno.Process = await startProcess();
 let timeout: number|null = null;
@@ -28,6 +26,6 @@ async function runApp() {
 for await (const event of Deno.watchFs('.')) {
     if (event.kind !== "access") {
         if (timeout) clearTimeout(timeout);
-        timeout = setTimeout(runApp, throttle);
+        timeout = setTimeout(runApp, 500);
     }
 }

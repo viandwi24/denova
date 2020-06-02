@@ -5,7 +5,7 @@ import { Context, RouterContext } from "../deps.ts";
 export type BodyUndefined = { type: "undefined"; value: undefined };
 
 export class Request {
-    private body: any = null;
+    public body: any = null;
     public all: Record<string|number,string|undefined> = {};
     public params: Record<string|number,string|undefined> = {};
 
@@ -28,6 +28,7 @@ export class Request {
      * @param isNull 
      */
     public async get(key?: string, isNull?: any) {
-        return await this.context.request.body();
+        let body = await this.context.request.body();
+        return body;
     }
 }

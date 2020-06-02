@@ -1,6 +1,7 @@
-import { Router, view, version } from "../mod.ts";
+import { Router, view, version, Request } from "../mod.ts";
 
-Router.get('/', async () => {
+Router.get('/', async (request: Request) => {
+    console.log(request);
     return await view('welcome', { name: 'World', version });
 });
 

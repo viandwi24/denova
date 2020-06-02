@@ -29,7 +29,6 @@ export { require } from "./support/require.ts";
 export { Service, Inject } from "./service.ts";
 
 // Services
-export * as Denovamon from "./services/denovamon.ts";
 
 // Interfaces
 export interface ServiceProvider {

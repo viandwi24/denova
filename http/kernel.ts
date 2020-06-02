@@ -28,9 +28,15 @@ export class Kernel {
         // default from oak
         http.use(HttpRouter.routes());
         http.use(HttpRouter.allowedMethods());
-        http.use((ctx) => {
-            ctx.throw(404);
-        });
+        http.use((ctx) => { ctx.throw(404); });
+        http.use(async (ctx) => {
+            const result = await ctx.request.body({
+                contentTypes: {
+                    raw: ["text"],
+                    text: ["application/javascript"],
+                },
+            });
+        })
 
         // http server listen
         try {
