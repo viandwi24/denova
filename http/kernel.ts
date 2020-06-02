@@ -79,6 +79,8 @@ export class Kernel {
             if (route.method == 'post') HttpRouter.post(route.uri, callback);
             if (route.method == 'put') HttpRouter.put(route.uri, callback);
             if (route.method == 'delete') HttpRouter.delete(route.uri, callback);
+            if (route.method == 'patch') HttpRouter.patch(route.uri, callback);
+            if (route.method == 'options') HttpRouter.options(route.uri, callback);
         }
 
         return null;
