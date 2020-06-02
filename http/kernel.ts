@@ -1,14 +1,15 @@
 import { Application } from "../mod.ts";
 import { Service } from "../service.ts";
-import { StdFlags, Context } from  "../deps.ts";
+import { StdFlags, Context, RouterContext } from  "../deps.ts";
 import { Router } from "../facades/router.ts";
 import { Response } from "../http/response.ts";
 import { Request } from "../http/request.ts";
 import { 
     makeHttp, 
-    Router as Http,
+    Router as HttpRouter,
 } from "./http.ts";
 import { require } from "../support/require.ts";
+import { Exception } from "../exception/exception.ts";
 
 @Service()
 export class Kernel {
@@ -27,8 +28,11 @@ export class Kernel {
         await this.handlerRoute(Router.getCollection());
 
         // default from oak
-        http.use(Http.routes());
-        http.use(Http.allowedMethods());
+        http.use(HttpRouter.routes());
+        http.use(HttpRouter.allowedMethods());
+        http.use((ctx) => {
+            ctx.throw(404);
+        });
 
         // http server listen
         try {
@@ -52,7 +56,7 @@ export class Kernel {
         for (let index in collection) {
             let route = collection[index];
             let action = route.action;
-            let callback = async (context:any) => {            
+            let callback = async (context: RouterContext) => {
                 let content = null;
                 if (typeof action == "function") {
                     content = await action(context);
@@ -63,13 +67,18 @@ export class Kernel {
                 }
     
                 // handle with instance response
-                let result = new Response(content, context);
-                return result.handle(context);
+                let response;
+                if (content instanceof Response) {
+                    response = content as Response;
+                } else {
+                    response = new Response(content, 200, context);
+                }
+                await response.handle(context);
             };
-            if (route.method == 'get') Http.get(route.uri, callback);
-            if (route.method == 'post') Http.post(route.uri, callback);
-            if (route.method == 'put') Http.put(route.uri, callback);
-            if (route.method == 'delete') Http.delete(route.uri, callback);
+            if (route.method == 'get') HttpRouter.get(route.uri, callback);
+            if (route.method == 'post') HttpRouter.post(route.uri, callback);
+            if (route.method == 'put') HttpRouter.put(route.uri, callback);
+            if (route.method == 'delete') HttpRouter.delete(route.uri, callback);
         }
 
         return null;
@@ -96,21 +105,40 @@ export class Kernel {
         }
 
         // load file
-        let controllerFile = await require(path);
+        let controllerFile;
+        try {
+            controllerFile = await require(path);
+        } catch (err) {
+            let content = `Failed to import controller. (${controllerClassName}) path : ${path} | Error : ${err}`;
+            let res = new Response(content);
+            return res;
+        }
 
-        // consruct acontroller
-        httpContainer.bind(controllerFile[controllerClassName], controllerFile[controllerClassName]);
+        // contstruct and bind
+        let controller;
+        let response;
+        try {
+            // consruct acontroller
+            httpContainer.bind(controllerFile[controllerClassName], controllerFile[controllerClassName]);
 
-        // call action
-        let controller = httpContainer.make(controllerFile[controllerClassName]);
-        let response = await controller[controllerMethodName](this.getRequest(context));
+            // call action
+            let request = await this.getRequest(context);
+            controller = httpContainer.make(controllerFile[controllerClassName]);
+            response = await controller[controllerMethodName](request);
+        } catch (err) {
+            let content = `Failed to call controller. (${controllerClassName}) path : ${path} | Error : ${err}`;
+            let res = new Response(content);
+            return res;
+        }
         
         // return
         return response;
     }
 
-    private getRequest(context: Context): Request {
-        return new Request(context);
+    private async getRequest(context: RouterContext) {
+        let req = new Request(context);
+        await req.prepare();
+        return req as Request;
     }
 
     private async exists (filename: string): Promise<boolean> {
