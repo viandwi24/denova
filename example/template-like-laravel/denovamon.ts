@@ -14,6 +14,7 @@ async function startProcess() {
 }
 
 const throttle = 500;
+console.log("[Denovamon] A Watcher Change For Denova. Watching...");
 let process: Deno.Process = await startProcess();
 let timeout: number|null = null;
 
