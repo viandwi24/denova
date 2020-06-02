@@ -1,4 +1,5 @@
 import { Dejs } from "../deps.ts";
+import { Exception } from "../exception/exception.ts";
 
 export class View {
     constructor() {
@@ -11,7 +12,12 @@ export class View {
      * @param params 
      */
     public async make(path: string, params: Dejs.Params = []) {
-        return await Dejs.renderFileToString( this.parsePath(path), params );
+        try {
+            return await Dejs.renderFileToString( this.parsePath(path), params );
+        } catch (err) {
+            path = this.parsePath(path);
+            throw new Exception("Failed open view file", err, { path })
+        }
     }
 
     /**
@@ -24,12 +30,20 @@ export class View {
         return this.getViewLocation() + safe + ".ejs";
     }
 
+    /**
+     * get views location
+     */
     private getViewLocation() {
         let root = Deno.cwd();
         let path = root + "/resources/views/";
         return path;
     }
 
+    /**
+     * parse a safe uri
+     * 
+     * @param uri 
+     */
     private safePath(uri: string) {
         let segment = uri.split("/");
         for (let index in segment) {
@@ -38,4 +52,18 @@ export class View {
 
         return "/" + segment.join("/");
     }
+
+    /**
+     * check file exist
+     * 
+     * @param filename 
+     */
+    private async exists (filename: string): Promise<boolean> {
+        try{
+          await Deno.stat(filename);
+          return true;
+        } catch (error) {
+            return false;
+        }
+    };
 }

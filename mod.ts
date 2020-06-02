@@ -10,6 +10,8 @@ export { Kernel as HTTPKernel } from "./http/kernel.ts";
 export { Request } from "./http/request.ts";
 export { Response } from "./http/response.ts";
 export { RouteCollection } from "./http/route_collection.ts";
+export { Router } from "./facades/router.ts";
+export { response } from "./facades/response.ts";
 
 // Console
 export { Kernel as ConsoleKernel } from "./console/kernel.ts";
@@ -19,7 +21,6 @@ export { View, view } from "./facades/view.ts";
 
 // Support / Library
 export { env } from "./support/env.ts";
-export { Router } from "./facades/router.ts";
 export * as Env from "./support/env.ts";
 export * as Config from "./support/config.ts";
 export { require } from "./support/require.ts";

@@ -17,4 +17,5 @@ export {
     require,
     View,
     view,
-} from "../../mod.ts";
+    response,
+} from "https://deno.land/x/denova@0.1.3/mod.ts";

@@ -1,7 +1,9 @@
-import { Application as OakApplication, Router as OakRouter } from "../deps.ts";
+import { Application as OakApplication, Router as OakRouter, Session } from "../deps.ts";
 
 let Http: any = null;
 let Router = new OakRouter;
+let session: any = new Session({ framework: "oak" });
+await session.init();
 
 export { Http, Router };
 export function makeHttp(): OakApplication {
@@ -29,6 +31,9 @@ export function makeHttp(): OakApplication {
             `${secure ? "https://" : "http://"}${hostname ?? "localhost"}:${port}`
         );
     });
+
+    // session
+    app.use(session.use()(session));
 
     // return
     Http = app;
