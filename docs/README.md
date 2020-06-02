@@ -12,13 +12,14 @@ Denova is only a project of a student who still doesn't know anything, just stud
 * Database (Custom Driver, Query Builder, Deloquent ORM)
 * Database Multi-Driver (now only support mysql)
 * Console
+* Denovamon (Hot Reload Http Server)
+* View
 ## To Do List
 * Middleware
 * Finishing Query Builder & Deloquent
-* View
 * Pretty Exception
-* Exception via http
-* Finishing Response, Requets for Http
+* Body Parser for Request
+* Console Collection
 
 # Getting Started
 ## Main Module
@@ -65,7 +66,21 @@ Then, you will get a `denova-project` folder that contains a collection of folde
 ├── denova.ts
 └── mod.ts
 ```
+Run Http Server :
+```
+deno run -A -c tsconfig.json app.ts --port=3000
+```
+or with Hot Reload :
+```
+deno run -a denovamon.ts
+```
 
+Run Denova Console :
+```
+deno run -A -c tsconfig.json denova.ts name
+deno run -A -c tsconfig.json denova.ts version
+deno run -A -c tsconfig.json denova.ts route:list
+```
 
 # Basic Usage
 ## Module
@@ -180,3 +195,59 @@ Well, the view needs 1 main params, that is, the view file, for example the view
 Well, all you have to do is write "welcome" with no particular extension format like what you find in laravel.
 
 Because the return of the view is a promise, so you must use the `async` function and` await`.
+
+And this a `welcome.ejs` :
+```
+Hello <%= name %>
+```
+See completed docs in <a target="_blank" href="https://deno.land/x/dejs">Dejs Docs</a>
+## Service Provider
+service provider is a file that will run automatically when denova is booted. This helps you to create your own suitable script.
+
+Service providers are registered at `config \ app.ts`, the service provider must implement the service provider interface, which must have the` register` and `boot` methods.
+
+`config\app.ts` :
+```
+export default {
+    services: [
+        'app/Providers/RouteServiceProvider.ts',
+        'app/Providers/DatabaseServiceProvider.ts',
+        'app/Providers/AppServiceProvider.ts',
+    ]
+}
+```
+`app\Providers\AppServiceProvider.ts` :
+```
+import { ServiceProvider, Service, Application } from "../../mod.ts";
+
+@Service()
+export class AppServiceProvider implements ServiceProvider {
+    constructor(private app: Application) {
+        
+    }
+
+    public register() {
+
+    }
+
+    public boot() {
+
+    }
+}
+```
+## Console
+Denova Console is a console that you can access by running `denova.ts`, this is available on the denova template boillerplate.
+
+The console is still developing, for now it still doesn't support writing thirdparties, but it will be updated soon.
+
+available command :
+```
+deno run -A -c tsconfig.json denova.ts name
+deno run -A -c tsconfig.json denova.ts version
+deno run -A -c tsconfig.json denova.ts route:list
+```
+## Denovamon
+Denovamon is an additional helper that helps in denova development, denovamon will read the changes that occur when you save, create a file then denovamon will automatically repeat the denova http server, this way you don't need to bother restarting the denova server manually.
+```
+deno run -A denovamon.ts
+```
