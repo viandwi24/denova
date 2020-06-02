@@ -3,13 +3,11 @@ import { Service } from "../service.ts";
 import { StdFlags, Context, RouterContext } from  "../deps.ts";
 import { Router } from "../facades/router.ts";
 import { Response } from "../http/response.ts";
-import { Request } from "../http/request.ts";
+import { controllerHanle } from "./dispatcher.ts";
 import { 
     makeHttp, 
     Router as HttpRouter,
 } from "./http.ts";
-import { require } from "../support/require.ts";
-import { Exception } from "../exception/exception.ts";
 
 @Service()
 export class Kernel {
@@ -61,7 +59,7 @@ export class Kernel {
                 if (typeof action == "function") {
                     content = await action(context);
                 } else if (typeof action == "string") {
-                    content = await this.controllerHanle(action, context);
+                    content = await controllerHanle(this.app, action, context);
                 } else {
                     content = action;
                 }
@@ -85,70 +83,4 @@ export class Kernel {
 
         return null;
     }
-
-    async controllerHanle(action:string, context:any) {
-        // make container for http
-        let httpContainer = new Application(false);
-        httpContainer.bind(Application, this.app);
-
-        // define
-        let rootPath = this.app.make('denova.path');
-        let ControllerPath = rootPath + "/app/Http/Controllers/";
-        let controllerClassName = action.split("@")[0]
-        let controllerMethodName = action.split("@")[1];
-        let path = ControllerPath + controllerClassName + ".ts";
-
-        // check file
-        let check = await this.exists(path);
-        if (!check) {
-            let content = `Controller ${controllerClassName} Not Found, in ${path}`;
-            let res = new Response(content);
-            return res;
-        }
-
-        // load file
-        let controllerFile;
-        try {
-            controllerFile = await require(path);
-        } catch (err) {
-            let content = `Failed to import controller. (${controllerClassName}) path : ${path} | Error : ${err}`;
-            let res = new Response(content);
-            return res;
-        }
-
-        // contstruct and bind
-        let controller;
-        let response;
-        try {
-            // consruct acontroller
-            httpContainer.bind(controllerFile[controllerClassName], controllerFile[controllerClassName]);
-
-            // call action
-            let request = await this.getRequest(context);
-            controller = httpContainer.make(controllerFile[controllerClassName]);
-            response = await controller[controllerMethodName](request);
-        } catch (err) {
-            let content = `Failed to call controller. (${controllerClassName}) path : ${path} | Error : ${err}`;
-            let res = new Response(content);
-            return res;
-        }
-        
-        // return
-        return response;
-    }
-
-    private async getRequest(context: RouterContext) {
-        let req = new Request(context);
-        await req.prepare();
-        return req as Request;
-    }
-
-    private async exists (filename: string): Promise<boolean> {
-        try{
-          await Deno.stat(filename);
-          return true;
-        } catch (error) {
-            return false;
-        }
-    };
 }
