@@ -1,9 +1,12 @@
 import { Router, view, version, Request } from "../mod.ts";
 
-Router.get('/', async (request: Request) => {
-    console.log(request);
-    return await view('welcome', { name: 'World', version });
-});
+Router.group({
+    middleware: ['log', 'example']
+}, () => {
+    Router.get('/', async (request: Request) => {
+        return await view('welcome', { name: 'World', version });
+    });
+})
 
 Router.get('/example', 'ExampleController@index');
 Router.post('/example', 'ExampleController@post');

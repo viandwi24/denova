@@ -7,7 +7,7 @@ import {
     version,
     Config,
     RouteCollection,
-    require,
+    Middleware,
 } from "../mod.ts";
 import { BootstrapConfig, root } from "./config.ts";
 
@@ -30,16 +30,10 @@ await BootstrapConfig();
 app.bind('denova.path', root);
 app.bind('denova.version', version);
 app.bind(HTTPKernel);
+app.singleton(Middleware);
 app.bind(ConsoleKernel);
 app.singleton(RouteCollection);
 app.singleton(Services);
-
-/**
- * Load middleware
- */
-let kernel_path = root + "/app/Http/kernel.ts";
-let middleware = await require(kernel_path);
-app.bind('middleware', middleware);
 
 /**
  * Run a services
@@ -47,6 +41,13 @@ app.bind('middleware', middleware);
  */
 let services = Config.get('app').services;
 await app.make(Services).run(services);
+
+/**
+ * Load middleware
+ */;
+await app.make(Middleware).load();
+
+
 
 /** export application container */
 export const Application = app;

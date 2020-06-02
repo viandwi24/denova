@@ -2,6 +2,7 @@
 
 // Foundation
 export { Application } from "./foundation/application.ts";
+export { Middleware } from "./foundation/middleware.ts";
 export { Services } from "./foundation/services.ts";
 export { version } from "./version.ts";
 

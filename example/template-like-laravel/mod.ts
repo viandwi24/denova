@@ -18,4 +18,5 @@ export {
     View,
     view,
     response,
+    Middleware,
 } from "../../mod.ts";
