@@ -68,6 +68,28 @@ export class Router {
     }
 
     /**
+     * add Patch Route
+     * 
+     * @string uri
+     * @param action 
+     */
+    public patch(uri:string, action:string|any) {
+        this.pushRoute("patch", uri, action);
+        return this;
+    }
+
+    /**
+     * add Options Route
+     * 
+     * @string uri
+     * @param action 
+     */
+    public options(uri:string, action:string|any) {
+        this.pushRoute("options", uri, action);
+        return this;
+    }
+
+    /**
      * push route to routemap
      * 
      * @param method 
