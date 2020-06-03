@@ -1,33 +1,63 @@
-import { app } from "../app.ts";
+import { Application } from "./application.ts";
+import { Service } from "../service.ts";
+import { require } from "../support/require.ts";
+import { Exception } from "../exception/exception.ts";
 
+@Service()
 export class Services {
-    services: any = {};
-    
-    async load(services: any) {
-        if (typeof services == 'object') {
-            let register = await this.register(services);
-            let booting = await this.booting(register);
+    private services: any = [];
+    private registered: any = [];
+    private booted: any = [];
+
+    constructor(private app: Application) {
+    }
+
+    public async run(services: Array<string>) {
+        let root = this.app.make('denova.path') + "/";
+
+        // list a services
+        this.services = services;
+
+        // run
+        for(let index in this.services) {
+            let service = this.services[index];
+            let serviceName = this.getNameService(service);
+            let regOnline = new RegExp('http://|https://');
+            let path = (regOnline.test(service)) ? service : (root + service);
+            let serviceClass = await require(path);
+            
+            // bind to container
+            try {
+                this.app.bind(serviceClass[serviceName], serviceClass[serviceName]);
+            } catch (err) {
+                throw new Exception("Failed bind a service to container.", err, { service, serviceName });
+            }
+
+            let aService: any;
+            
+            // register service
+            try {
+                aService = this.app.make(serviceClass[serviceName]);
+                await aService.register();
+                this.registered.push({ service, name: serviceName });
+            } catch (err) {
+                throw new Exception("Failed register a service.", err, { service: serviceClass[serviceName] });
+            }
+
+            // boot service
+            try {
+                await aService.boot();
+                this.booted.push({ service, name: serviceName });
+            } catch (err) {
+                throw new Exception("Failed booting a service.", err, { service: serviceClass[serviceName] });
+            }
         }
     }
 
-    async register(services: any) {
-        for(let serviceKey in services) {
-            let path = app().make("denova.path") + "/" + services[serviceKey] + ".ts";
-            let serviceClass = await import("file:///" + path);
-            let service = new serviceClass.default;
-
-            // register services
-            await service.register();
-
-            // cache
-            this.services[service.constructor.name] = service;
-        }
-        return this.services;
-    }
-
-    async booting(services: any) {
-        for(let serviceKey in services) {
-            await services[serviceKey].boot();
-        }
+    private getNameService(path: string): string {
+        let reg = new RegExp('/([^\/]+).ts')
+        let serviceNameClass: any = reg.exec(path);
+        serviceNameClass = (serviceNameClass != null) ? serviceNameClass[1] : '';
+        return serviceNameClass;
     }
 }

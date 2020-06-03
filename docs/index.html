@@ -7,6 +7,9 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+  <style>
+    h1 { margin-top: 4rem !important; margin-bottom: 1rem; }
+  </style>
 </head>
 <body>
   <div id="app"></div>
@@ -14,18 +17,29 @@
     window.$docsify = {
       name: 'Denova<br><small>Deno Framework Like Laravel</small>',
       repo: 'https://www.github.com/viandwi24/denova',
+      loadNavbar: true,
+      "auto2top":true,
+      "executeScript":true,
+      "mergeNavbar":true,
+      "maxLevel":4,
+      "subMaxLevel":2,
 
       search: {
         maxAge: 86400000,
         paths: 'auto',
         placeholder: 'Type to search',
         noData: 'No Results!',
-        depth: 6,
+        depth: 10,
         hideOtherSidebarContent: true,
       },
     }
+    document.addEventListener("DOMContentLoaded", () => Prism.highlight());
   </script>
   <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
   <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+  <script src="//unpkg.com/prismjs/components/prism-bash.min.js"></script>
+  <script src="//unpkg.com/prismjs/components/prism-markdown.min.js"></script>
+  <script src="//unpkg.com/prismjs/components/prism-nginx.min.js"></script>
+  <script src="//unpkg.com/prismjs/components/prism-typescript.min.js"></script>
 </body>
 </html>

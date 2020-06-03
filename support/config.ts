@@ -1,18 +1,59 @@
-import { app } from "../app.ts";
+// Copyright 2020 the Denova authors. All rights reserved. MIT license.
 
-export class Config {
-    configs: any = {};
+import { require } from "./require.ts";
+import { Exception } from "../exception/exception.ts";
 
-    async load() {
-        let path = app().make("denova.path") + "/config";
-        for (const dir of Deno.readDirSync(path)) {
-            let config = await import("file:///" + path + "/" + dir.name);
-            this.configs[dir.name.replace(".ts", "")] = config.default;
+/**
+ * Cache a config
+ * a confing loaded set in this variable.
+ */
+let cache: any = {};
+
+/**
+ * Load a config file from folder
+ * 
+ * @param path 
+ */
+export async function loadFromFolder(path: string){
+    let dirs;
+
+    /**
+     * Get list of file in path / dir
+     */
+    try {
+        dirs = Deno.readDirSync(path);
+    } catch (err) {
+        throw new Exception("Failed read a config folder.", err, {path}).log();
+    }
+
+    /**
+     * Loop for get all config in file and add to cache
+     */
+    for (const dir of dirs) {
+        let file = path + "/" + dir.name;
+        let config;
+
+        /**
+         * Import a local file config
+         */
+        try {
+            config = await require(file);
+        } catch (err) {
+            throw new Exception("Failed to import config file.", err, {path}).log();
         }
+        cache[dir.name.replace(".ts", "")] = config.default;
     }
+}
 
-    get(name:string) {
-        if (typeof this.configs[name] == 'undefined') return null;
-        return this.configs[name];
-    }
+
+/**
+ * Get a config
+ * 
+ * @param key 
+ * @param ifNull (default)
+ */
+export function get(key?: string, ifNull?: any) {
+    return (typeof key != 'undefined') 
+        ? (cache[key] ?? ifNull)
+        : cache;
 }

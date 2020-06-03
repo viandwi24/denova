@@ -1,60 +1,80 @@
 # Denova
-A Typescript Framework For Deno - Framework Looks Like Laravel<br>
-See docs in : https://viandwi24.github.io/denova<br>
+A Typescript Framework For Deno - Framework Looks Like Laravel
+
+| See docs in : https://viandwi24.github.io/denova
+
+| or : https://deno.land/x/denova@0.1.3/docs/README.md
+
 | A Documentation and Readme will be updated gradually, please wait ^_^
 
+<hr>
 
 ## Standart Use
-## Clone a boilerplate look larave structure
+#### Clone a boilerplate look larave structure
 ```
 git clone https://github.com/viandwi24/denova-project
 cd denova-project
 ```
-## denova console
+or you can see in `https://deno.land/x/denova@0.1.3/example` for same boilerplate
+
+#### denova console
 ```
-deno run -A denova.ts version
+deno run -A --unstable -c tsconfig.json denova.ts version
+deno run -A --unstable -c tsconfig.json denova.ts name
+deno run -A --unstable -c tsconfig.json denova.ts route:list
 ```
-## run http server
+#### run http server
 ```
-deno run -A app.ts --port=3000
+deno run -A --unstable -c tsconfig.json app.ts --port=3000
 ```
 
-## Simple use
-### Create your main "app.ts"
+#### Simple use
+##### Create your main "app.ts"
 ```
 import {
     Application,
     HTTPKernel
-} from "https://deno.land/x/denova@0.1.2/mod.ts";
+} from "https://deno.land/x/denova@0.1.3/mod.ts";
 
 // create container
 const app = new Application();
+let root = this.app.make('denova.path');
 
 // bind a service and variable
-app.singleton('denova.path', Deno.cwd());
-app.singleton('http.kernel', new HTTPKernel);
+app.bind('denova.path', root);
+app.bind(HTTPKernel);
 
 // define routes
-RouteMap.load(Deno.cwd() + "/routes.ts");
+await Router.group({}, `${root}/routes/web.ts`);
 
 // http server
-const request = app.make('http.kernel');
+const request = app.make(HTTPKernel);
 request.capture();
 ```
 
 
-### Create route file `/routes.ts`
+##### Create route file `/routes.ts`
 ```
 import {
     Router
-} from "https://deno.land/x/denova@0.1.2/facades.ts";
+} from "https://deno.land/x/denova@0.1.3/mod.ts";
 
 Router.get("/", () => {
     return "Hello World!";
 });
 ```
 
-### You cant run your HTTP Server with :
+##### Create config file for decorator `tsconfig.json`
 ```
-deno run -A --unstable app.ts --port=3000
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
+}
 ```
+
+#### You cant run your HTTP Server with :
+```
+deno run -A --unstable -c tsconfig.json app.ts --port=3000
+``
